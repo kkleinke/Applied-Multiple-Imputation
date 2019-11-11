@@ -1,0 +1,45 @@
+
+TITLE: Quadratic Growth Curve Model for Crime Rate (t1 - t4)
+       Imputation by pmm (donor strategy: midastouch)
+       
+DATA:     FILE is implist.dat;
+          TYPE is INDIVIDUAL ;
+          FORMAT is FREE;
+          TYPE= IMPUTATION;
+          
+VARIABLE: NAMES are id
+                    FEMALE
+                    RE 	! Realschule 
+                    GY 	! Gymnasium
+                    !HA	! Hauptschule 
+                	ACRIM 	! delinquency t1
+                	BCRIM	! delinquency t2
+                	CCRIM	! delinquency t3
+                	DCRIM;	! delinquency t4
+          USEVARIABLES are
+          ACRIM BCRIM CCRIM DCRIM FEMALE RE GY;
+          MISSING are ACRIM BCRIM CCRIM DCRIM (-999);
+          COUNT are ACRIM BCRIM CCRIM DCRIM (i);
+
+ANALYSIS: ESTIMATOR = ML ;
+          INTEGRATION = 15 ; ! number of integration points
+
+
+MODEL:  I S Q | ACRIM@0 BCRIM@1 CCRIM@2 DCRIM@3 ; 
+		! count model intercept slope and quadratic slope
+
+        Ii Si Qi | ACRIM#1@0 BCRIM#1@1 CCRIM#1@2 DCRIM#1@3 ;
+        	! zero model intercept slope and quadratic slope
+
+
+        I S Q on FEMALE RE GY; ! Regressions
+        
+        Ii Si Qi on FEMALE RE GY; ! Regressions
+
+        I-Qi@0; ! all residual variances fixed @0
+                   
+OUTPUT: PATTERNS TECH5 TECH8 ;
+
+PLOT:
+    Type=Plot3;
+    Series = ACRIM BCRIM CCRIM DCRIM(*);
