@@ -312,6 +312,7 @@ for (m in 1:100)
 
 # Chapter 5.5.3 mi
 
+library(mi)
 mdf <- missing_data.frame(dat2)
 show(mdf)
 
